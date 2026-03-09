@@ -52,7 +52,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 20px 20px 60px 20px;
             min-height: 100vh;
             width: 100%;
             margin: 0 auto;
@@ -314,6 +314,42 @@
             display: block;
         }
 
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .footer-content {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            direction: ltr;
+        }
+
+        .linkedin-link {
+            color: #0077b5;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .linkedin-link:hover {
+            color: #005885;
+            text-decoration: underline;
+        }
+
+        .linkedin-icon {
+            margin-right: 4px;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 480px) {
             .logo {
                 font-size: 2rem;
@@ -392,6 +428,15 @@
             <button class="secondary-btn" id="retryBtn">נסה שוב</button>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <span class="linkedin-icon">💼</span>
+            <a href="https://www.linkedin.com/in/marom-sverdlov-105057261/" target="_blank" rel="noopener noreferrer" class="linkedin-link">
+                Marom Sverdlov
+            </a>
+        </div>
+    </footer>
 
     <script>
         // Global app state
