@@ -97,7 +97,6 @@
             box-shadow: 0 8px 32px rgba(255, 59, 48, 0.3);
             position: relative;
             overflow: hidden;
-            margin: 0 auto;
         }
 
         .main-button:hover {
@@ -129,10 +128,13 @@
             display: none;
             width: 100%;
             max-width: 400px;
+            text-align: center;
         }
 
         .screen.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .loading-overlay {
@@ -352,13 +354,11 @@
                 WHERE<span class="miklat">MIKLAT</span>
             </div>
             <div class="subtitle">איפה המקלט הקרוב אליי?</div>
-            <div style="display: flex; justify-content: center; width: 100%;">
-                <button class="main-button pulse" id="findShelterBtn">
-                    <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">📍</div>
-                    <div>מצא מקלט</div>
-                    <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 0.2rem;">יבקש גישה למיקום</div>
-                </button>
-            </div>
+            <button class="main-button pulse" id="findShelterBtn">
+                <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">📍</div>
+                <div>מצא מקלט</div>
+                <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 0.2rem;">יבקש גישה למיקום</div>
+            </button>
         </div>
 
         <!-- Results Screen -->
