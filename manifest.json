@@ -1,0 +1,78 @@
+{
+  "name": "WhereMiklat - איפה המקלט?",
+  "short_name": "WhereMiklat",
+  "description": "מצא את המקלט הקרוב אליך בזמן אמת - Find the nearest shelter in real-time",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#ff3b30",
+  "background_color": "#0a0a0a",
+  "lang": "he",
+  "dir": "rtl",
+  "categories": ["safety", "emergency", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxNiIgeT0iMTYiPgo8cGF0aCBkPSJNMjAgMkM5LjUgMiAyIDkuNSAyIDIwUzkuNSAzOCAyMCAzOFMzOCAzMC41IDM4IDIwUzMwLjUgMiAyMCAyWk0yMCAzNkMxMC42IDM2IDQgMjguNCA0IDIwQzQgMTEuNiAxMC42IDQgMjAgNFMzNiAxMS42IDM2IDIwQzM2IDI4LjQgMjkuNCAzNiAyMCAzNloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yOCAxOUwyMiAxM1YxOEgxMlYyMEgyMlYyNUwyOCAxOVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",
+      "sizes": "72x72",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIyMCIgeT0iMjAiPgo8cGF0aCBkPSJNMjggMkMxMy4zIDIgMiAxMy4zIDIgMjhTMTMuMyA1NCAyOCA1NFM1NCA0Mi43IDU0IDI4UzQyLjcgMiAyOCAyWk0yOCA1MEMxNC45IDUwIDYgNDEuMSA2IDI4QzYgMTQuOSAxNC45IDYgMjggNlM1MCAxNC45IDUwIDI4QzUwIDQxLjEgNDEuMSA1MCAyOCA1MFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0zOSAyN0wzMSAxOVYyNUgxN1YyOUgzMVYzNUwzOSAyN1oiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",
+      "sizes": "96x96",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjgiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iNzYiIGhlaWdodD0iNzYiIHZpZXdCb3g9IjAgMCA3NiA3NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIyNiIgeT0iMjYiPgo8cGF0aCBkPSJNMzggMkMxOC4xIDIgMiAxOC4xIDIgMzhTMTguMSA3NCAzOCA3NFM3NCA1Ny45IDc0IDM4UzU3LjkgMiAzOCAyWk0zOCA2OUMyMS4zIDY5IDcgNTQuNyA3IDM4UzcuMyA3IDM4IDdTNjkgMjEuMyA2OSAzOFM1NC43IDY5IDM4IDY5WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTUyIDM3TDQxIDI2VjMzSDIzVjQxSDQxVjQ4TDUyIDM3WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=",
+      "sizes": "128x128",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNDQiIGhlaWdodD0iMTQ0IiByeD0iMzIiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iODQiIGhlaWdodD0iODQiIHZpZXdCb3g9IjAgMCA4NCA4NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIzMCIgeT0iMzAiPgo8cGF0aCBkPSJNNDIgMkMxOS45IDIgMiAxOS45IDIgNDJTMTkuOSA4MiA0MiA4MlM4MiA2NC4xIDgyIDQyUzY0LjEgMiA0MiAyWk00MiA3NkMyMy43IDc2IDggNjAuMyA4IDQyUzIzLjcgOCA0MiA4Uzc2IDIzLjcgNzYgNDJTNjAuMyA3NiA0MiA3NloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik01NyA0MUw0NSAyOVYzN0gyNVY0NUg0NVY1M0w1NyA0MVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",
+      "sizes": "144x144",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUyIiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDE1MiAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTIiIGhlaWdodD0iMTUyIiByeD0iMzQiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHZpZXdCb3g9IjAgMCA4OCA4OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIzMiIgeT0iMzIiPgo8cGF0aCBkPSJNNDQgMkMyMS4yIDIgMiAyMS4yIDIgNDRTMjEuMiA4NiA0NCA4NlM4NiA2Ni44IDg2IDQ0UzY2LjggMiA0NCAyWk00NCA4MUMyNC4zIDgxIDcgNjMuNyA3IDQ0UzI0LjMgNyA0NCA3UzgxIDI0LjMgODEgNDRTNjMuNyA4MSA0NCA4MVoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik01OSA0M0w0NyAzMVYzOUgyN1Y0N0g0N1Y1NUw1OSA0M1oiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",
+      "sizes": "152x152",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iNDQiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iMTEyIiBoZWlnaHQ9IjExMiIgdmlld0JveD0iMCAwIDExMiAxMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iNDAiIHk9IjQwIj4KPHBhdGggZD0iTTU2IDJDMjcgMiAyIDI3IDIgNTZTMjcgMTEwIDU2IDExMFMxMTAgODUgMTEwIDU2Uzg1IDIgNTYgMlpNNTYgMTAzQzMxIDEwMyA5IDgxIDkgNTZTMzEgOSA1NiA5UzEwMyAzMSAxMDMgNTZTODEgMTAzIDU2IDEwM1oiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik03NSA1NUw1OSAzOVY0OEgzNFY2Mkg1OVY3MUw3NSA1NVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzg0IiBoZWlnaHQ9IjM4NCIgdmlld0JveD0iMCAwIDM4NCAzODQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzODQiIGhlaWdodD0iMzg0IiByeD0iODgiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iMjI0IiBoZWlnaHQ9IjIyNCIgdmlld0JveD0iMCAwIDIyNCAyMjQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iODAiIHk9IjgwIj4KPHBhdGggZD0iTTExMiA0QzU0IDQgNCA1NCA0IDExMlM1NCAyMjAgMTEyIDIyMFMyMjAgMTcwIDIyMCAxMTJTMTcwIDQgMTEyIDRaTTExMiAyMDZDNjIgMjA2IDE4IDE2MiAxOCAxMTJTNjIgMTggMTEyIDE4UzIwNiA2MiAyMDYgMTEyUzE2MiAyMDYgMTEyIDIwNloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xNTAgMTEwTDExOCA3OFY5Nkg2OFYxMjRIMTE4VjE0MkwxNTAgMTEwWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cjwvc3ZnPgo=",
+      "sizes": "384x384",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTE2IiBmaWxsPSIjZmYzYjMwIi8+Cjxzdmcgd2lkdGg9IjMwNCIgaGVpZ2h0PSIzMDQiIHZpZXdCb3g9IjAgMCAzMDQgMzA0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjEwNCIgeT0iMTA0Ij4KPHBhdGggZD0iTTE1MiA0QzczIDQgNCA3MyA0IDE1MlM3MyAzMDAgMTUyIDMwMFMzMDAgMjMxIDMwMCAxNTJTMjMxIDQgMTUyIDRaTTE1MiAyNzlDODUgMjc5IDI1IDIxOSAyNSAxNTJTODUgMjUgMTUyIDI1UzI3OSA4NSAyNzkgMTUyUzIxOSAyNzkgMTUyIDI3OVoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMDIgMTUwTDE1OSAxMDdWMTI5SDkxVjE3MUgxNTlWMTkzTDIwMiAxNTBaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+Cg==",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "חיפוש מקלט",
+      "short_name": "מקלט",
+      "description": "מצא מקלט בקרבתך",
+      "url": "/?action=search",
+      "icons": [
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMjAiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIyMCIgeT0iMjAiPgo8cGF0aCBkPSJNMjggMkMxMy4zIDIgMiAxMy4zIDIgMjhTMTMuMyA1NCAyOCA1NFM1NCA0Mi43IDU0IDI4UzQyLjcgMiAyOCAyWk0yOCA1MEM3IDE2IDYgNDEuMSA2IDI4QzYgMTQuOSAxNC45IDYgMjggNlM1MCAxNC45IDUwIDI4QzUwIDQxLjEgNDEuMSA1MCAyOCA1MFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0zOSAyN0wzMSAxOVYyNUgxN1YyOUgzMVYzNUwzOSAyN1oiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "handle_links": "preferred"
+}

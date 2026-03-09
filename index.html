@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ff3b30">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WhereMiklat">
+    <meta name="description" content="מצא את המקלט הקרוב אליך בזמן אמת - Where Miklat">
+
+    <title>WhereMiklat - איפה המקלט?</title>
+
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <!-- proj4js for coordinate conversion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            direction: rtl;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .logo .miklat {
+            color: #ff3b30;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-bottom: 3rem;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .main-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff3b30, #ff6b5a);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(255, 59, 48, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(255, 59, 48, 0.4);
+        }
+
+        .main-button:active {
+            transform: scale(0.95);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(255, 59, 48, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
+            }
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 10, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #333;
+            border-top: 4px solid #ff3b30;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .distance {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #34c759;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .shelter-info {
+            font-size: 1rem;
+            color: #a0a0a0;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .nav-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .nav-btn.waze {
+            background: #4db6e6;
+            color: white;
+        }
+
+        .nav-btn.gmaps {
+            background: #34a853;
+            color: white;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 2px solid #ff3b30;
+            color: #ff3b30;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .error-card {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid rgba(255, 59, 48, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff3b30;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            font-size: 1rem;
+            color: #ffffff;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .coordinates {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-family: monospace;
+            direction: ltr;
+        }
+
+        .offline-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff9500;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: none;
+            z-index: 1001;
+        }
+
+        .offline-indicator.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .main-button {
+                width: 160px;
+                height: 160px;
+                font-size: 1.3rem;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .result-card {
+                padding: 1.5rem;
+            }
+
+            .distance {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-indicator" id="offlineIndicator">
+        אין חיבור לאינטרנט
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">מאתר מקלט...</div>
+    </div>
+
+    <div class="container">
+        <!-- Main Screen -->
+        <div class="screen active" id="mainScreen">
+            <div class="logo">
+                WHERE<span class="miklat">MIKLAT</span>
+            </div>
+            <div class="subtitle">איפה המקלט הקרוב אליי?</div>
+            <button class="main-button pulse" id="findShelterBtn">
+                מצא מקלט
+            </button>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="result-card">
+                <div class="distance" id="distance">טוען...</div>
+                <div class="shelter-info" id="shelterInfo">מקלט ציבורי</div>
+                <div class="coordinates" id="coordinates"></div>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn waze" id="wazeBtn">פתח ב-Waze</a>
+                <a href="#" class="nav-btn gmaps" id="gmapsBtn">פתח ב-Google Maps</a>
+            </div>
+
+            <button class="secondary-btn" id="newSearchBtn">חיפוש חדש</button>
+        </div>
+
+        <!-- Error Screen -->
+        <div class="screen" id="errorScreen">
+            <div class="error-card">
+                <div class="error-title">שגיאה</div>
+                <div class="error-message" id="errorMessage">אירעה שגיאה בחיפוש המקלט</div>
+            </div>
+            <button class="secondary-btn" id="retryBtn">נסה שוב</button>
+        </div>
+    </div>
+
+    <script>
+        // Global app state
+        const AppState = {
+            userLocation: null,
+            nearestShelter: null,
+            isOnline: navigator.onLine,
+            lastSearchResult: null
+        };
+
+        // DOM elements
+        const elements = {
+            mainScreen: document.getElementById('mainScreen'),
+            resultsScreen: document.getElementById('resultsScreen'),
+            errorScreen: document.getElementById('errorScreen'),
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            offlineIndicator: document.getElementById('offlineIndicator'),
+            findShelterBtn: document.getElementById('findShelterBtn'),
+            distance: document.getElementById('distance'),
+            shelterInfo: document.getElementById('shelterInfo'),
+            coordinates: document.getElementById('coordinates'),
+            wazeBtn: document.getElementById('wazeBtn'),
+            gmapsBtn: document.getElementById('gmapsBtn'),
+            newSearchBtn: document.getElementById('newSearchBtn'),
+            retryBtn: document.getElementById('retryBtn'),
+            errorMessage: document.getElementById('errorMessage')
+        };
+
+        // Initialize proj4 for coordinate conversion
+        proj4.defs('EPSG:3857', '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs');
+
+        // Utility functions
+        function showScreen(screenName) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            elements[screenName + 'Screen'].classList.add('active');
+        }
+
+        function showLoading(show = true) {
+            elements.loadingOverlay.classList.toggle('show', show);
+        }
+
+        function showError(message) {
+            elements.errorMessage.textContent = message;
+            showScreen('error');
+            showLoading(false);
+        }
+
+        function updateOfflineStatus() {
+            AppState.isOnline = navigator.onLine;
+            elements.offlineIndicator.classList.toggle('show', !AppState.isOnline);
+        }
+
+        // Coordinate conversion functions
+        function convertToWebMercator(lat, lon) {
+            try {
+                return proj4('EPSG:4326', 'EPSG:3857', [lon, lat]);
+            } catch (error) {
+                console.error('Coordinate conversion error:', error);
+                throw new Error('שגיאה בהמרת קואורדינטות');
+            }
+        }
+
+        function convertFromWebMercator(x, y) {
+            try {
+                return proj4('EPSG:3857', 'EPSG:4326', [x, y]);
+            } catch (error) {
+                console.error('Coordinate conversion error:', error);
+                throw new Error('שגיאה בהמרת קואורדינטות');
+            }
+        }
+
+        // Check if coordinates are in Israel bounds (rough approximation)
+        function isInIsrael(lat, lon) {
+            return lat >= 29.0 && lat <= 33.5 && lon >= 34.0 && lon <= 36.0;
+        }
+
+        // Haversine distance calculation
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // Earth's radius in meters
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a =
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Format distance for display
+        function formatDistance(meters) {
+            if (meters < 1000) {
+                return Math.round(meters) + ' מטר';
+            } else {
+                return (meters / 1000).toFixed(1) + ' ק"מ';
+            }
+        }
+
+        // Get user location
+        function getUserLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('הדפדפן לא תומך במיקום GPS'));
+                    return;
+                }
+
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 60000 // 1 minute cache
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+
+                        if (!isInIsrael(latitude, longitude)) {
+                            reject(new Error('השירות זמין בישראל בלבד'));
+                            return;
+                        }
+
+                        resolve({ lat: latitude, lon: longitude });
+                    },
+                    (error) => {
+                        let message;
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                // Check if this is likely an Android HTTPS issue
+                                if (window.location.protocol === 'http:' && /Android/i.test(navigator.userAgent)) {
+                                    message = 'ב-Android נדרש HTTPS לגישה למיקום. אנא עבור לאתר המאובטח או הפעל הרשאות ידנית בהגדרות Chrome';
+                                } else {
+                                    message = 'נדרשת הרשאה לגישה למיקום. אנא הפעל GPS בהגדרות הדפדפן';
+                                }
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                message = 'לא ניתן לאתר את המיקום. ודא חיבור לאינטרנט';
+                                break;
+                            case error.TIMEOUT:
+                                message = 'פג הזמן לחיפוש המיקום. נסה שוב';
+                                break;
+                            default:
+                                message = 'שגיאה באיתור המיקום';
+                        }
+                        reject(new Error(message));
+                    },
+                    options
+                );
+            });
+        }
+
+
+
+        // API call to GovMap with retry logic
+        async function findShelters(lat, lon, tolerance = 2000) {
+            const webMercatorCoords = convertToWebMercator(lat, lon);
+
+            const requestBody = {
+                point: webMercatorCoords,
+                layers: [{ layerId: "417" }],
+                tolerance: tolerance
+            };
+
+            try {
+                // Determine API URL based on environment
+                const isLocalhost = window.location.hostname === 'localhost' ||
+                                   window.location.hostname === '127.0.0.1' ||
+                                   window.location.hostname.includes('192.168.') ||
+                                   window.location.hostname.includes('10.0.');
+
+                let apiUrl;
+                if (isLocalhost) {
+                    // Use local CORS proxy for development
+                    apiUrl = window.location.protocol + '//' + window.location.hostname + ':8001/api/proxy';
+                } else {
+                    // Use Vercel serverless function for production
+                    apiUrl = '/api/proxy';
+                }
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Parse the nested response structure
+                const entities = data.data && data.data.length > 0 ? data.data[0].entities : null;
+
+                if (!entities || entities.length === 0) {
+                    // Try with larger tolerance
+                    if (tolerance < 5000) {
+                        const newTolerance = tolerance === 2000 ? 5000 : (tolerance === 1000 ? 2000 : 5000);
+                        return await findShelters(lat, lon, newTolerance);
+                    } else {
+                        throw new Error('לא נמצאו מקלטים בקרבת מקום. נסה להרחיב את החיפוש או לנסות שוב');
+                    }
+                }
+
+                return entities;
+            } catch (error) {
+                if (!AppState.isOnline) {
+                    // Try to use cached data
+                    const cached = localStorage.getItem('lastShelterSearch');
+                    if (cached) {
+                        const cachedData = JSON.parse(cached);
+                        console.log('Using cached shelter data');
+                        // Handle both old and new cache formats
+                        if (cachedData.entities) {
+                            return cachedData.entities;
+                        } else if (cachedData.data && cachedData.data.length > 0) {
+                            return cachedData.data[0].entities;
+                        }
+                    }
+                }
+                throw error;
+            }
+        }
+
+        // Find nearest shelter
+        function findNearestShelter(userLat, userLon, shelters) {
+            let nearestShelter = null;
+            let minDistance = Infinity;
+
+            for (const shelter of shelters) {
+                if (!shelter.centroid || shelter.centroid.length !== 2) {
+                    continue;
+                }
+
+                const [x, y] = shelter.centroid;
+                const [shelterLon, shelterLat] = convertFromWebMercator(x, y);
+
+                const distance = calculateDistance(userLat, userLon, shelterLat, shelterLon);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestShelter = {
+                        ...shelter,
+                        lat: shelterLat,
+                        lon: shelterLon,
+                        distance: distance
+                    };
+                }
+            }
+
+            return nearestShelter;
+        }
+
+        // Generate navigation URLs
+        function generateNavigationUrls(lat, lon) {
+            const wazeUrl = `https://waze.com/ul?ll=${lat},${lon}&navigate=yes`;
+            const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking`;
+
+            return { wazeUrl, gmapsUrl };
+        }
+
+        // Main search function
+        async function searchForShelter() {
+            try {
+                showLoading(true);
+
+                // Get user location
+                const location = await getUserLocation();
+                AppState.userLocation = location;
+
+                // Find shelters
+                const shelters = await findShelters(location.lat, location.lon);
+
+                // Find nearest shelter
+                const nearestShelter = findNearestShelter(location.lat, location.lon, shelters);
+
+                if (!nearestShelter) {
+                    throw new Error('לא נמצאו מקלטים זמינים באזור');
+                }
+
+                AppState.nearestShelter = nearestShelter;
+
+                // Cache the result
+                const searchResult = {
+                    userLocation: location,
+                    nearestShelter: nearestShelter,
+                    timestamp: Date.now()
+                };
+                AppState.lastSearchResult = searchResult;
+                localStorage.setItem('lastShelterSearch', JSON.stringify({
+                    entities: shelters,
+                    userLocation: location,
+                    timestamp: Date.now()
+                }));
+
+                // Update UI
+                displayResults(nearestShelter);
+
+            } catch (error) {
+                console.error('Search error:', error);
+                showError(error.message || 'אירעה שגיאה בחיפוש המקלט');
+            }
+        }
+
+        // Display results
+        function displayResults(shelter) {
+            elements.distance.textContent = formatDistance(shelter.distance);
+            elements.shelterInfo.textContent = shelter.name || 'מקלט ציבורי';
+            elements.coordinates.textContent = `${shelter.lat.toFixed(6)}, ${shelter.lon.toFixed(6)}`;
+
+            const { wazeUrl, gmapsUrl } = generateNavigationUrls(shelter.lat, shelter.lon);
+            elements.wazeBtn.href = wazeUrl;
+            elements.gmapsBtn.href = gmapsUrl;
+
+            showScreen('results');
+            showLoading(false);
+        }
+
+        // Event listeners
+        elements.findShelterBtn.addEventListener('click', searchForShelter);
+        elements.retryBtn.addEventListener('click', searchForShelter);
+        elements.newSearchBtn.addEventListener('click', () => showScreen('main'));
+
+        // Network status monitoring
+        window.addEventListener('online', updateOfflineStatus);
+        window.addEventListener('offline', updateOfflineStatus);
+
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            updateOfflineStatus();
+
+            // Check for cached results on app start
+            const cached = localStorage.getItem('lastShelterSearch');
+            if (cached) {
+                try {
+                    const data = JSON.parse(cached);
+                    // If cached data is less than 1 hour old, offer to use it
+                    if (Date.now() - data.timestamp < 3600000) {
+                        AppState.lastSearchResult = data;
+                    }
+                } catch (error) {
+                    console.error('Error parsing cached data:', error);
+                }
+            }
+
+        });
+    </script>
+</body>
+</html>

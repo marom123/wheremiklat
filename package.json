@@ -1,0 +1,23 @@
+{
+  "name": "wheremiklat",
+  "version": "1.0.0",
+  "description": "WhereMiklat - Find the nearest shelter in Israel",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'No build step required - static PWA'"
+  },
+  "keywords": [
+    "shelter",
+    "emergency",
+    "israel",
+    "pwa",
+    "miklat",
+    "bomb-shelter"
+  ],
+  "author": "WhereMiklat Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
