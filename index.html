@@ -340,7 +340,7 @@
 
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <div class="loading-text">מאתר מקלט...</div>
+        <div class="loading-text" id="loadingText">מבקש הרשאה למיקום...</div>
     </div>
 
     <div class="container">
@@ -351,7 +351,9 @@
             </div>
             <div class="subtitle">איפה המקלט הקרוב אליי?</div>
             <button class="main-button pulse" id="findShelterBtn">
-                מצא מקלט
+                <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">📍</div>
+                <div>מצא מקלט</div>
+                <div style="font-size: 0.8rem; opacity: 0.9; margin-top: 0.2rem;">יבקש גישה למיקום</div>
             </button>
         </div>
 
@@ -396,6 +398,7 @@
             resultsScreen: document.getElementById('resultsScreen'),
             errorScreen: document.getElementById('errorScreen'),
             loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingText: document.getElementById('loadingText'),
             offlineIndicator: document.getElementById('offlineIndicator'),
             findShelterBtn: document.getElementById('findShelterBtn'),
             distance: document.getElementById('distance'),
@@ -419,8 +422,11 @@
             elements[screenName + 'Screen'].classList.add('active');
         }
 
-        function showLoading(show = true) {
+        function showLoading(show = true, text = 'מבקש הרשאה למיקום...') {
             elements.loadingOverlay.classList.toggle('show', show);
+            if (show) {
+                elements.loadingText.textContent = text;
+            }
         }
 
         function showError(message) {
@@ -480,18 +486,36 @@
             }
         }
 
+        // Check geolocation permission status
+        async function checkLocationPermission() {
+            if (!navigator.permissions) {
+                return 'unknown';
+            }
+
+            try {
+                const permission = await navigator.permissions.query({ name: 'geolocation' });
+                return permission.state; // 'granted', 'denied', or 'prompt'
+            } catch (error) {
+                return 'unknown';
+            }
+        }
+
         // Get user location
         function getUserLocation() {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 if (!navigator.geolocation) {
                     reject(new Error('הדפדפן לא תומך במיקום GPS'));
                     return;
                 }
 
+                // Check current permission status
+                const permissionStatus = await checkLocationPermission();
+                console.log('Location permission status:', permissionStatus);
+
                 const options = {
                     enableHighAccuracy: true,
                     timeout: 15000,
-                    maximumAge: 60000 // 1 minute cache
+                    maximumAge: 0 // Always request fresh location - no cache
                 };
 
                 navigator.geolocation.getCurrentPosition(
@@ -503,6 +527,7 @@
                             return;
                         }
 
+                        // Location obtained successfully
                         resolve({ lat: latitude, lon: longitude });
                     },
                     (error) => {
@@ -513,7 +538,7 @@
                                 if (window.location.protocol === 'http:' && /Android/i.test(navigator.userAgent)) {
                                     message = 'ב-Android נדרש HTTPS לגישה למיקום. אנא עבור לאתר המאובטח או הפעל הרשאות ידנית בהגדרות Chrome';
                                 } else {
-                                    message = 'נדרשת הרשאה לגישה למיקום. אנא הפעל GPS בהגדרות הדפדפן';
+                                    message = 'נדרשת הרשאה לגישה למיקום.\n\nלאיפוס הרשאות:\n• Chrome: לחץ על הנעל 🔒 ליד הכתובת\n• Safari: הגדרות → פרטיות ומדיניות → שירותי מיקום\n• לחץ "מצא מקלט" שוב לאחר מכן';
                                 }
                                 break;
                             case error.POSITION_UNAVAILABLE:
@@ -649,9 +674,16 @@
             try {
                 showLoading(true);
 
-                // Get user location
+                // Clear any cached location data to force fresh permission request
+                AppState.userLocation = null;
+                AppState.nearestShelter = null;
+
+                // Get user location - this should trigger permission popup each time
                 const location = await getUserLocation();
                 AppState.userLocation = location;
+
+                // Update loading message
+                showLoading(true, 'מחפש מקלטים בקרבתך...');
 
                 // Find shelters
                 const shelters = await findShelters(location.lat, location.lon);
