@@ -30,6 +30,12 @@
     <!-- proj4js for coordinate conversion -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
 
+    <!-- Vercel Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -498,11 +504,11 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <a href="https://www.linkedin.com/in/marom-sverdlov-105057261/" target="_blank" rel="noopener noreferrer" class="footer-link linkedin-link">
+            <a href="https://www.linkedin.com/in/marom-sverdlov-105057261/" target="_blank" rel="noopener noreferrer" class="footer-link linkedin-link" onclick="if(window.va) window.va('track', 'Footer Link Clicked', {link: 'LinkedIn'});">
                 <span class="footer-icon">💼</span>
                 LinkedIn
             </a>
-            <a href="https://ko-fi.com/marom_sverdlov" target="_blank" rel="noopener noreferrer" class="footer-link kofi-link">
+            <a href="https://ko-fi.com/marom_sverdlov" target="_blank" rel="noopener noreferrer" class="footer-link kofi-link" onclick="if(window.va) window.va('track', 'Footer Link Clicked', {link: 'Ko-fi Support'});">
                 <span class="footer-icon">☕</span>
                 Support
             </a>
@@ -562,8 +568,17 @@
         }
 
         function updateOfflineStatus() {
+            const wasOnline = AppState.isOnline;
             AppState.isOnline = navigator.onLine;
             elements.offlineIndicator.classList.toggle('show', !AppState.isOnline);
+
+            // Track network status changes
+            if (window.va && wasOnline !== AppState.isOnline) {
+                window.va('track', 'Network Status Changed', {
+                    online: AppState.isOnline,
+                    timestamp: new Date().toISOString()
+                });
+            }
         }
 
         // Coordinate conversion functions
@@ -648,7 +663,22 @@
                     (position) => {
                         const { latitude, longitude } = position.coords;
 
+                        // Track location permission granted
+                        if (window.va) {
+                            window.va('track', 'Location Permission Granted', {
+                                accuracy: position.coords.accuracy,
+                                permission_status: permissionStatus
+                            });
+                        }
+
                         if (!isInIsrael(latitude, longitude)) {
+                            // Track out of Israel usage
+                            if (window.va) {
+                                window.va('track', 'Location Outside Israel', {
+                                    latitude: latitude.toFixed(2),
+                                    longitude: longitude.toFixed(2)
+                                });
+                            }
                             reject(new Error('השירות זמין בישראל בלבד'));
                             return;
                         }
@@ -658,8 +688,10 @@
                     },
                     (error) => {
                         let message;
+                        let errorType;
                         switch (error.code) {
                             case error.PERMISSION_DENIED:
+                                errorType = 'permission_denied';
                                 // Check if this is likely an Android HTTPS issue
                                 if (window.location.protocol === 'http:' && /Android/i.test(navigator.userAgent)) {
                                     message = 'ב-Android נדרש HTTPS לגישה למיקום. אנא עבור לאתר המאובטח או הפעל הרשאות ידנית בהגדרות Chrome';
@@ -668,14 +700,28 @@
                                 }
                                 break;
                             case error.POSITION_UNAVAILABLE:
+                                errorType = 'position_unavailable';
                                 message = 'לא ניתן לאתר את המיקום. ודא חיבור לאינטרנט';
                                 break;
                             case error.TIMEOUT:
+                                errorType = 'timeout';
                                 message = 'פג הזמן לחיפוש המיקום. נסה שוב';
                                 break;
                             default:
+                                errorType = 'unknown';
                                 message = 'שגיאה באיתור המיקום';
                         }
+
+                        // Track location permission errors
+                        if (window.va) {
+                            window.va('track', 'Location Permission Error', {
+                                error_code: error.code,
+                                error_type: errorType,
+                                permission_status: permissionStatus,
+                                user_agent: navigator.userAgent.substring(0, 100) // Truncated for privacy
+                            });
+                        }
+
                         reject(new Error(message));
                     },
                     options
@@ -797,8 +843,15 @@
 
         // Main search function
         async function searchForShelter() {
+            const searchStartTime = Date.now();
+
             try {
                 showLoading(true);
+
+                // Track search start
+                if (window.va) {
+                    window.va('track', 'Shelter Search Started');
+                }
 
                 // Clear any cached location data to force fresh permission request
                 AppState.userLocation = null;
@@ -836,11 +889,32 @@
                     timestamp: Date.now()
                 }));
 
+                // Track successful search
+                const searchDuration = Date.now() - searchStartTime;
+                if (window.va) {
+                    window.va('track', 'Shelter Search Successful', {
+                        duration_ms: searchDuration,
+                        distance_meters: Math.round(nearestShelter.distance),
+                        shelters_found: shelters.length
+                    });
+                }
+
                 // Update UI
                 displayResults(nearestShelter);
 
             } catch (error) {
                 console.error('Search error:', error);
+
+                // Track search failure
+                const searchDuration = Date.now() - searchStartTime;
+                if (window.va) {
+                    window.va('track', 'Shelter Search Failed', {
+                        duration_ms: searchDuration,
+                        error_type: error.name || 'Unknown',
+                        error_message: error.message || 'Unknown error'
+                    });
+                }
+
                 showError(error.message || 'אירעה שגיאה בחיפוש המקלט');
             }
         }
@@ -855,14 +929,50 @@
             elements.wazeBtn.href = wazeUrl;
             elements.gmapsBtn.href = gmapsUrl;
 
+            // Add click tracking to navigation buttons
+            elements.wazeBtn.addEventListener('click', () => {
+                if (window.va) {
+                    window.va('track', 'Navigation Click', {
+                        app: 'Waze',
+                        distance_meters: Math.round(shelter.distance)
+                    });
+                }
+            });
+
+            elements.gmapsBtn.addEventListener('click', () => {
+                if (window.va) {
+                    window.va('track', 'Navigation Click', {
+                        app: 'Google Maps',
+                        distance_meters: Math.round(shelter.distance)
+                    });
+                }
+            });
+
             showScreen('results');
             showLoading(false);
         }
 
-        // Event listeners
-        elements.findShelterBtn.addEventListener('click', searchForShelter);
-        elements.retryBtn.addEventListener('click', searchForShelter);
-        elements.newSearchBtn.addEventListener('click', () => showScreen('main'));
+        // Event listeners with analytics
+        elements.findShelterBtn.addEventListener('click', () => {
+            if (window.va) {
+                window.va('track', 'Find Shelter Button Clicked');
+            }
+            searchForShelter();
+        });
+
+        elements.retryBtn.addEventListener('click', () => {
+            if (window.va) {
+                window.va('track', 'Retry Button Clicked');
+            }
+            searchForShelter();
+        });
+
+        elements.newSearchBtn.addEventListener('click', () => {
+            if (window.va) {
+                window.va('track', 'New Search Button Clicked');
+            }
+            showScreen('main');
+        });
 
         // Network status monitoring
         window.addEventListener('online', updateOfflineStatus);
@@ -921,6 +1031,12 @@
             e.preventDefault();
             // Store the event so it can be triggered later
             deferredPrompt = e;
+
+            // Track install prompt availability
+            if (window.va) {
+                window.va('track', 'PWA Install Prompt Available');
+            }
+
             // Show install button or banner (optional)
             showInstallPromotion();
         });
@@ -930,6 +1046,13 @@
             console.log('PWA was installed successfully');
             deferredPrompt = null;
             hideInstallPromotion();
+
+            // Track PWA installation
+            if (window.va) {
+                window.va('track', 'PWA Installed', {
+                    timestamp: new Date().toISOString()
+                });
+            }
         });
 
         // Function to show install promotion (optional)
@@ -961,24 +1084,53 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
+            const appStartTime = performance.now();
+
             updateOfflineStatus();
+
+            // Track app initialization
+            if (window.va) {
+                window.va('track', 'App Initialized', {
+                    user_agent: navigator.userAgent.substring(0, 100),
+                    viewport_width: window.innerWidth,
+                    viewport_height: window.innerHeight,
+                    is_pwa: window.matchMedia('(display-mode: standalone)').matches,
+                    is_online: navigator.onLine,
+                    language: navigator.language,
+                    platform: navigator.platform
+                });
+            }
 
             // Run PWA readiness check for debugging
             setTimeout(checkPWAReadiness, 1000);
 
             // Check for cached results on app start
             const cached = localStorage.getItem('lastShelterSearch');
+            let hasCachedData = false;
             if (cached) {
                 try {
                     const data = JSON.parse(cached);
                     // If cached data is less than 1 hour old, offer to use it
                     if (Date.now() - data.timestamp < 3600000) {
                         AppState.lastSearchResult = data;
+                        hasCachedData = true;
                     }
                 } catch (error) {
                     console.error('Error parsing cached data:', error);
                 }
             }
+
+            // Track app load performance
+            window.addEventListener('load', () => {
+                const loadTime = performance.now() - appStartTime;
+                if (window.va) {
+                    window.va('track', 'App Load Complete', {
+                        load_time_ms: Math.round(loadTime),
+                        has_cached_data: hasCachedData,
+                        service_worker_ready: 'serviceWorker' in navigator
+                    });
+                }
+            });
 
         });
     </script>
