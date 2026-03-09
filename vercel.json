@@ -1,4 +1,6 @@
 {
+  "buildCommand": null,
+  "outputDirectory": ".",
   "functions": {
     "api/proxy.js": {
       "maxDuration": 10
@@ -47,12 +49,6 @@
           "value": "application/javascript"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ]
 }
