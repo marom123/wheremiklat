@@ -331,13 +331,22 @@
             font-size: 0.8rem;
             color: #a0a0a0;
             direction: ltr;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
         .linkedin-link {
             color: #0077b5;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
         }
 
         .linkedin-link:hover {
@@ -345,9 +354,23 @@
             text-decoration: underline;
         }
 
-        .linkedin-icon {
+        .kofi-link {
+            color: #ff5e5b;
+        }
+
+        .kofi-link:hover {
+            color: #ff3d3a;
+            text-decoration: underline;
+        }
+
+        .footer-icon {
             margin-right: 4px;
             font-size: 0.9rem;
+        }
+
+        .footer-separator {
+            color: #666;
+            margin: 0 4px;
         }
 
         @media (max-width: 480px) {
@@ -375,6 +398,15 @@
 
             .distance {
                 font-size: 1.7rem;
+            }
+
+            .footer-content {
+                font-size: 0.7rem;
+                gap: 12px;
+            }
+
+            .footer-icon {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -431,9 +463,14 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <span class="linkedin-icon">💼</span>
-            <a href="https://www.linkedin.com/in/marom-sverdlov-105057261/" target="_blank" rel="noopener noreferrer" class="linkedin-link">
+            <a href="https://www.linkedin.com/in/marom-sverdlov-105057261/" target="_blank" rel="noopener noreferrer" class="footer-link linkedin-link">
+                <span class="footer-icon">💼</span>
                 Marom Sverdlov
+            </a>
+            <span class="footer-separator">•</span>
+            <a href="http://ko-fi.com/marom_sverdlov" target="_blank" rel="noopener noreferrer" class="footer-link kofi-link">
+                <span class="footer-icon">☕</span>
+                Support
             </a>
         </div>
     </footer>
