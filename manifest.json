@@ -5,12 +5,13 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "theme_color": "#ff3b30",
   "background_color": "#0a0a0a",
   "lang": "he",
   "dir": "rtl",
   "categories": ["safety", "emergency", "utilities"],
+  "display_override": ["window-controls-overlay", "standalone"],
   "icons": [
     {
       "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9IiNmZjNiMzAiLz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxNiIgeT0iMTYiPgo8cGF0aCBkPSJNMjAgMkM5LjUgMiAyIDkuNSAyIDIwUzkuNSAzOCAyMCAzOFMzOCAzMC41IDM4IDIwUzMwLjUgMiAyMCAyWk0yMCAzNkMxMC42IDM2IDQgMjguNCA0IDIwQzQgMTEuNiAxMC42IDQgMjAgNFMzNiAxMS42IDM2IDIwQzM2IDI4LjQgMjkuNCAzNiAyMCAzNloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yOCAxOUwyMiAxM1YxOEgxMlYyMEgyMlYyNUwyOCAxOVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K",

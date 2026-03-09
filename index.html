@@ -9,6 +9,15 @@
     <meta name="apple-mobile-web-app-title" content="WhereMiklat">
     <meta name="description" content="מצא את המקלט הקרוב אליך בזמן אמת - Where Miklat">
 
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="WhereMiklat">
+    <meta name="msapplication-TileColor" content="#ff3b30">
+    <meta name="msapplication-config" content="browserconfig.xml">
+
+    <!-- Disable Chrome's translation prompt -->
+    <meta name="google" content="notranslate">
+
     <title>WhereMiklat - איפה המקלט?</title>
 
     <link rel="manifest" href="manifest.json">
@@ -865,6 +874,13 @@
                 navigator.serviceWorker.register('sw.js')
                     .then((registration) => {
                         console.log('SW registered: ', registration);
+
+                        // Check if app is already installed
+                        if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+                            console.log('App is running in standalone mode - already installed');
+                        } else {
+                            console.log('App is running in browser - not installed yet');
+                        }
                     })
                     .catch((registrationError) => {
                         console.log('SW registration failed: ', registrationError);
@@ -872,9 +888,83 @@
             });
         }
 
+        // Additional PWA checks for debugging
+        function checkPWAReadiness() {
+            console.log('=== PWA Readiness Check ===');
+            console.log('Service Worker supported:', 'serviceWorker' in navigator);
+            console.log('Is HTTPS:', location.protocol === 'https:' || location.hostname === 'localhost');
+            console.log('Has manifest:', document.querySelector('link[rel="manifest"]') !== null);
+            console.log('User agent:', navigator.userAgent);
+
+            // Check manifest
+            if (document.querySelector('link[rel="manifest"]')) {
+                fetch('manifest.json')
+                    .then(response => response.json())
+                    .then(manifest => {
+                        console.log('Manifest loaded:', manifest);
+                        console.log('Has required fields:',
+                            manifest.name && manifest.short_name &&
+                            manifest.start_url && manifest.display &&
+                            manifest.icons && manifest.icons.length > 0);
+                    })
+                    .catch(error => console.log('Manifest error:', error));
+            }
+        }
+
+        // PWA Installation handling
+        let deferredPrompt = null;
+
+        // Listen for the beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('PWA install prompt available');
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Store the event so it can be triggered later
+            deferredPrompt = e;
+            // Show install button or banner (optional)
+            showInstallPromotion();
+        });
+
+        // Handle successful installation
+        window.addEventListener('appinstalled', (e) => {
+            console.log('PWA was installed successfully');
+            deferredPrompt = null;
+            hideInstallPromotion();
+        });
+
+        // Function to show install promotion (optional)
+        function showInstallPromotion() {
+            // You can show a banner or button here
+            // For now, just log that it's available
+            console.log('App can be installed - install prompt ready');
+        }
+
+        // Function to hide install promotion
+        function hideInstallPromotion() {
+            console.log('Install promotion hidden');
+        }
+
+        // Function to trigger installation manually (if needed)
+        function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             updateOfflineStatus();
+
+            // Run PWA readiness check for debugging
+            setTimeout(checkPWAReadiness, 1000);
 
             // Check for cached results on app start
             const cached = localStorage.getItem('lastShelterSearch');
