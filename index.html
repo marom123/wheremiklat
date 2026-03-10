@@ -432,9 +432,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            max-width: 400px;
+            gap: 16px;
+            max-width: 500px;
             margin: 0 auto;
+            flex-wrap: wrap;
         }
 
         .footer-link {
@@ -519,6 +520,129 @@
             text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
         }
 
+        .info-link {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(59, 130, 246, 0.08));
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.2);
+        }
+
+        .info-link:hover {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(59, 130, 246, 0.15));
+            color: #93c5fd;
+            border-color: rgba(96, 165, 250, 0.4);
+            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.25);
+        }
+
+        .info-link .footer-icon {
+            text-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+        }
+
+        .info-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .info-modal.show {
+            display: flex;
+        }
+
+        .info-modal-content {
+            background: linear-gradient(145deg, rgba(15, 15, 15, 0.95), rgba(25, 25, 25, 0.95));
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            direction: rtl;
+        }
+
+        .info-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .info-close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section-content {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .info-section-content ul {
+            margin: 8px 0;
+            padding-right: 20px;
+        }
+
+        .info-section-content li {
+            margin-bottom: 6px;
+        }
+
+        .info-highlight {
+            color: #34d399;
+            font-weight: 500;
+        }
+
+        .info-link-text {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+
         .footer-separator {
             color: #555;
             font-weight: bold;
@@ -558,22 +682,41 @@
 
             .footer-content {
                 font-size: 0.75rem;
-                gap: 14px;
+                gap: 12px;
                 max-width: 100%;
             }
 
             .footer-link {
-                padding: 8px 12px;
+                padding: 8px 10px;
                 border-radius: 10px;
+                font-size: 0.7rem;
             }
 
             .footer-icon {
-                font-size: 1rem;
-                margin-right: 6px;
+                font-size: 0.9rem;
+                margin-right: 4px;
             }
 
             .footer-link:hover {
                 transform: translateY(-2px) scale(1.01);
+            }
+
+            .info-modal-content {
+                margin: 10px;
+                padding: 20px;
+                max-height: 90vh;
+            }
+
+            .info-modal-title {
+                font-size: 1.2rem;
+            }
+
+            .info-section-title {
+                font-size: 1rem;
+            }
+
+            .info-section-content {
+                font-size: 0.9rem;
             }
 
             .emergency-panel {
@@ -705,8 +848,82 @@
                 <span class="footer-icon">☕</span>
                 Support
             </a>
+            <button class="footer-link info-link" onclick="showInfoModal()" onmousedown="if(window.va) window.va('track', 'Footer Link Clicked', {link: 'App Info'});">
+                <span class="footer-icon">ℹ️</span>
+                Info
+            </button>
         </div>
     </footer>
+
+    <div class="info-modal" id="infoModal">
+        <div class="info-modal-content">
+            <div class="info-modal-header">
+                <h2 class="info-modal-title">אודות האפליקציה</h2>
+                <button class="info-close-btn" onclick="hideInfoModal()">×</button>
+            </div>
+
+            <div class="info-section">
+                <div class="info-section-title">
+                    <span>🛡️</span>
+                    פרטיות ואמון
+                </div>
+                <div class="info-section-content">
+                    <ul>
+                        <li><span class="info-highlight">אין איסוף מידע אישי:</span> האפליקציה לא שומרת או שולחת מידע מזהה אישי</li>
+                        <li><span class="info-highlight">מיקום מקומי:</span> נתוני המיקום מעובדים רק במכשיר שלך</li>
+                        <li><span class="info-highlight">ללא מעקב:</span> אין מעקב אחר הרגלי שימוש או מיקום</li>
+                        <li><span class="info-highlight">קוד פתוח:</span> ניתן לבדוק את הקוד ב-<span class="info-link-text">GitHub</span></li>
+                        <li><span class="info-highlight">אבטחה:</span> כל הקשרים מוצפנים (HTTPS)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-section-title">
+                    <span>📊</span>
+                    מקורות המידע
+                </div>
+                <div class="info-section-content">
+                    <ul>
+                        <li><span class="info-highlight">ממשלת ישראל:</span> נתונים רשמיים ממפת המקלטים הממשלתית (GovMap)</li>
+                        <li><span class="info-highlight">עדכני ומדויק:</span> המידע מתעדכן ישירות ממאגרי הממשלה</li>
+                        <li><span class="info-highlight">כיסוי מלא:</span> כל המקלטים הרשומים במדינת ישראל</li>
+                        <li><span class="info-highlight">זמן אמת:</span> החיפוש מבוצע בזמן אמת מול השרתים הרשמיים</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-section-title">
+                    <span>🇮🇱</span>
+                    כיסוי ארצי
+                </div>
+                <div class="info-section-content">
+                    <ul>
+                        <li><span class="info-highlight">כל הארץ:</span> המקלטים כוללים את כל יישובי ישראל</li>
+                        <li><span class="info-highlight">ערים וכפרים:</span> מקלטים ציבוריים בכל הרשויות המקומיות</li>
+                        <li><span class="info-highlight">דיוק גבוה:</span> חיפוש לפי קואורדינטות GPS מדויקות</li>
+                        <li><span class="info-highlight">מרחק ממוקד:</span> מציאת המקלט הקרוב ביותר למיקום שלך</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-section-title">
+                    <span>⚡</span>
+                    טכנולוגיה
+                </div>
+                <div class="info-section-content">
+                    <ul>
+                        <li><span class="info-highlight">PWA:</span> אפליקציית אינטרנט מתקדמת הניתנת להתקנה</li>
+                        <li><span class="info-highlight">עבודה לא מקוונת:</span> שמירת תוצאות אחרונות לשימוש ללא אינטרנט</li>
+                        <li><span class="info-highlight">מהיר ויעיל:</span> אופטימיזציה למהירות בזמני חירום</li>
+                        <li><span class="info-highlight">נגישות:</span> תמיכה בכל הדפדפנים הראשיים</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Global app state
@@ -1203,6 +1420,49 @@
 
             console.log(`Emergency call initiated: ${service}`);
         }
+
+        // Info modal functions
+        function showInfoModal() {
+            const modal = document.getElementById('infoModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+            if (window.va) {
+                window.va('track', 'Info Modal Opened', {
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        function hideInfoModal() {
+            const modal = document.getElementById('infoModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+
+            if (window.va) {
+                window.va('track', 'Info Modal Closed', {
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        // Close modal when clicking outside content
+        document.addEventListener('click', (event) => {
+            const modal = document.getElementById('infoModal');
+            if (event.target === modal) {
+                hideInfoModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('infoModal');
+                if (modal.classList.contains('show')) {
+                    hideInfoModal();
+                }
+            }
+        });
 
         // Additional PWA checks for debugging
         function checkPWAReadiness() {
