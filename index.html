@@ -329,6 +329,104 @@
             display: block;
         }
 
+        .emergency-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 59, 48, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 8px 32px rgba(255, 59, 48, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .emergency-panel.collapsed {
+            padding: 8px;
+        }
+
+        .emergency-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .emergency-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .emergency-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .emergency-buttons.hidden {
+            display: none;
+        }
+
+        .emergency-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .emergency-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .emergency-btn:active {
+            transform: scale(0.98);
+        }
+
+        .emergency-icon {
+            font-size: 1.1rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .emergency-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .emergency-number {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .emergency-service {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
         .footer {
             position: fixed;
             bottom: 0;
@@ -493,12 +591,71 @@
             .footer-link:hover {
                 transform: translateY(-2px) scale(1.01);
             }
+
+            .emergency-panel {
+                top: 15px;
+                left: 15px;
+                padding: 10px;
+            }
+
+            .emergency-btn {
+                min-width: 110px;
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .emergency-number {
+                font-size: 0.85rem;
+            }
+
+            .emergency-service {
+                font-size: 0.7rem;
+            }
+
+            .emergency-toggle {
+                font-size: 0.75rem;
+                padding: 6px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="offline-indicator" id="offlineIndicator">
         אין חיבור לאינטרנט
+    </div>
+
+    <div class="emergency-panel" id="emergencyPanel">
+        <button class="emergency-toggle" id="emergencyToggle">🚨 חירום</button>
+        <div class="emergency-buttons" id="emergencyButtons">
+            <a href="tel:100" class="emergency-btn" onclick="trackEmergencyCall('Police - 100')">
+                <span class="emergency-icon">👮‍♂️</span>
+                <div class="emergency-info">
+                    <div class="emergency-number">100</div>
+                    <div class="emergency-service">משטרה</div>
+                </div>
+            </a>
+            <a href="tel:101" class="emergency-btn" onclick="trackEmergencyCall('Ambulance - 101')">
+                <span class="emergency-icon">🚑</span>
+                <div class="emergency-info">
+                    <div class="emergency-number">101</div>
+                    <div class="emergency-service">מד"א</div>
+                </div>
+            </a>
+            <a href="tel:102" class="emergency-btn" onclick="trackEmergencyCall('Fire Department - 102')">
+                <span class="emergency-icon">🚒</span>
+                <div class="emergency-info">
+                    <div class="emergency-number">102</div>
+                    <div class="emergency-service">כיבוי אש</div>
+                </div>
+            </a>
+            <a href="tel:104" class="emergency-btn" onclick="trackEmergencyCall('Home Front Command - 104')">
+                <span class="emergency-icon">🛡️</span>
+                <div class="emergency-info">
+                    <div class="emergency-number">104</div>
+                    <div class="emergency-service">פקוד עורף</div>
+                </div>
+            </a>
+        </div>
     </div>
 
     <div class="loading-overlay" id="loadingOverlay">
@@ -1042,6 +1199,54 @@
             });
         }
 
+        // Emergency panel functionality
+        function initializeEmergencyPanel() {
+            const emergencyToggle = document.getElementById('emergencyToggle');
+            const emergencyButtons = document.getElementById('emergencyButtons');
+            const emergencyPanel = document.getElementById('emergencyPanel');
+
+            let isExpanded = false;
+
+            emergencyToggle.addEventListener('click', () => {
+                isExpanded = !isExpanded;
+
+                if (isExpanded) {
+                    emergencyButtons.classList.remove('hidden');
+                    emergencyPanel.classList.remove('collapsed');
+                    emergencyToggle.textContent = '🚨 סגור';
+                } else {
+                    emergencyButtons.classList.add('hidden');
+                    emergencyPanel.classList.add('collapsed');
+                    emergencyToggle.textContent = '🚨 חירום';
+                }
+
+                // Track emergency panel usage
+                if (window.va) {
+                    window.va('track', 'Emergency Panel Toggled', {
+                        expanded: isExpanded,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            });
+
+            // Initialize as collapsed
+            emergencyButtons.classList.add('hidden');
+            emergencyPanel.classList.add('collapsed');
+        }
+
+        // Track emergency call attempts
+        function trackEmergencyCall(service) {
+            if (window.va) {
+                window.va('track', 'Emergency Call Initiated', {
+                    service: service,
+                    timestamp: new Date().toISOString(),
+                    user_agent: navigator.userAgent.substring(0, 50)
+                });
+            }
+
+            console.log(`Emergency call initiated: ${service}`);
+        }
+
         // Additional PWA checks for debugging
         function checkPWAReadiness() {
             console.log('=== PWA Readiness Check ===');
@@ -1131,6 +1336,9 @@
             const appStartTime = performance.now();
 
             updateOfflineStatus();
+
+            // Initialize emergency panel
+            initializeEmergencyPanel();
 
             // Track app initialization
             if (window.va) {
