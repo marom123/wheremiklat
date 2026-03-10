@@ -1,9 +1,10 @@
 // Service Worker for WhereMiklat PWA
 // Handles caching, offline functionality, and background sync
 
-const CACHE_NAME = 'wheremiklat-v1';
-const DYNAMIC_CACHE_NAME = 'wheremiklat-dynamic-v1';
-const API_CACHE_NAME = 'wheremiklat-api-v1';
+const CACHE_VERSION = Date.now(); // Force cache invalidation
+const CACHE_NAME = `wheremiklat-v${CACHE_VERSION}`;
+const DYNAMIC_CACHE_NAME = `wheremiklat-dynamic-v${CACHE_VERSION}`;
+const API_CACHE_NAME = `wheremiklat-api-v${CACHE_VERSION}`;
 
 // Resources to cache immediately (app shell)
 const STATIC_CACHE_URLS = [

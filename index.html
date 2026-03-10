@@ -18,6 +18,11 @@
     <!-- Disable Chrome's translation prompt -->
     <meta name="google" content="notranslate">
 
+    <!-- Force no caching for emergency app updates -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <title>WhereMiklat - איפה המקלט?</title>
 
     <link rel="manifest" href="manifest.json">
@@ -1405,12 +1410,31 @@
         window.addEventListener('online', updateOfflineStatus);
         window.addEventListener('offline', updateOfflineStatus);
 
-        // Service Worker registration
+        // Service Worker registration with forced updates
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then((registration) => {
                         console.log('SW registered: ', registration);
+
+                        // Force update check immediately
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            console.log('New service worker found, updating...');
+
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('New version available, refreshing...');
+                                    // Force immediate update for emergency app
+                                    window.location.reload();
+                                }
+                            });
+                        });
+
+                        // Check for updates every 30 seconds (aggressive for emergency app)
+                        setInterval(() => {
+                            registration.update();
+                        }, 30000);
 
                         // Check if app is already installed
                         if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
@@ -1565,9 +1589,37 @@
             }
         }
 
+        // App version for cache busting
+        const APP_VERSION = Date.now();
+
+        // Force clear any existing caches for emergency updates
+        function clearAllCaches() {
+            if ('caches' in window) {
+                caches.keys().then((cacheNames) => {
+                    cacheNames.forEach((cacheName) => {
+                        if (cacheName.startsWith('wheremiklat-')) {
+                            console.log('Clearing old cache:', cacheName);
+                            caches.delete(cacheName);
+                        }
+                    });
+                });
+            }
+
+            // Clear localStorage with version check
+            const lastVersion = localStorage.getItem('app-version');
+            if (lastVersion !== APP_VERSION.toString()) {
+                console.log('New app version detected, clearing local storage');
+                localStorage.clear();
+                localStorage.setItem('app-version', APP_VERSION.toString());
+            }
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             const appStartTime = performance.now();
+
+            // Force clear caches on load for emergency updates
+            clearAllCaches();
 
             updateOfflineStatus();
 
@@ -1580,7 +1632,8 @@
                     is_pwa: window.matchMedia('(display-mode: standalone)').matches,
                     is_online: navigator.onLine,
                     language: navigator.language,
-                    platform: navigator.platform
+                    platform: navigator.platform,
+                    app_version: APP_VERSION
                 });
             }
 
